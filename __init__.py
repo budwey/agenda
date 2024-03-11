@@ -1,20 +1,30 @@
 from flask import Flask
-from .config import Config
-from .routes import api as Api
-from .models import db as Db
-from .schemas import ma as Schema
+from core import db, api, schema
+from config import Config, Database, Api, Schema
+
+# Plugin imports
+from plugins.sheets import SheetPlugin
+
+# Available plugins
+plugins = [
+    SheetPlugin
+]
 
 
 def core():
-    # Initializing app
+    # Setup app
     app = Flask(__name__)
-    # Setup Config
+    # Setup config
     Config.setup(app)
+    # Setup plugins
+    Config.register_plugins(app, plugins)
     # Setup Database
-    Db.setup(app)
+    db.setup(app)
     # Setup API
-    Api.setup(app)
+    api.setup(app)
     # Setup Schema
-    Schema.setup(app)
+    schema.setup(app)
+
+    print(app.url_map)
 
     return app

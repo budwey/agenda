@@ -22,15 +22,15 @@ env_params = {
 # MESSAGES
 messages = {
     'db': {
-        'success': "Success: Database connected.",
+        'success': "Database connected.",
         'error': "Error: An error has occurred while connecting to database."
     },
     'api': {
-        'success': "Success: API Service mounted.",
-        'error': "Error: An error has occurred while mounting API Service."
+        'success': "Api service mounted.",
+        'error': "Error: An error has occurred while mounting Api."
     },
-    'schema': {
-        'success': "Success: Schemas Service mounted.",
+    'schemas': {
+        'success': "Schemas service mounted.",
         'error': "Error: An error has occurred while mounting Schemas Service."
     }
 }

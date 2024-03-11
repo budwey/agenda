@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api as ApiRestful, Resource as ResourceRestful
-from .constants import flask_env, envs, env_params, messages
+from constants import flask_env, envs, env_params, messages
 
 
 class Config:
@@ -24,6 +24,13 @@ class Config:
             if key in env_params.values():
                 app.config[key] = value
 
+    @classmethod
+    def register_plugins(cls, app, plugins):
+        for plugin in plugins:
+            resource = plugin.get('resources')
+            prefix = plugin.get('prefix')
+            app.register_blueprint(resource, url_prefix=prefix)
+
 
 class Database(SQLAlchemy):
     def __init__(self):
@@ -31,16 +38,18 @@ class Database(SQLAlchemy):
 
     def setup(self, app):
         self.init_app(app)
-        print(messages.get('db').get('success'))
+        with app.app_context():
+            self.create_all()
+            print(messages.get('db').get('success'))
 
 
 class Api(ApiRestful):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, app=None):
+        super().__init__(app)
 
     def setup(self, app):
         self.init_app(app)
-        print(messages.get('api').get('success'))
+        print(f"{messages.get('api').get('success')}")
 
 
 class Resource(ResourceRestful):
@@ -54,4 +63,4 @@ class Schema(Marshmallow):
 
     def setup(self, app):
         self.init_app(app)
-        print(messages.get('schema').get('success'))
+        print(messages.get('schemas').get('success'))
