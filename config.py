@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Api as ApiRestful, Resource as ResourceRestful
+from flask_restx import Api as ApiRestful, Resource as ResourceRestful
 from constants import flask_env, envs, env_params, messages
 
 
@@ -53,8 +53,8 @@ class Api(ApiRestful):
 
 
 class Resource(ResourceRestful):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, app=None):
+        super().__init__(self, app)
 
 
 class Schema(Marshmallow):

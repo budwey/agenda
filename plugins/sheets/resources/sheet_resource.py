@@ -1,5 +1,3 @@
-from flask import jsonify
-
 from api.config import Resource
 from api.plugins.sheets import Sheet, SheetSchema
 
@@ -14,4 +12,5 @@ class SheetResource(Resource):
         schema = SheetSchema()
         result = schema.dump(sheet)
 
-        return 'test'
+        return result
+
