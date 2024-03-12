@@ -2,7 +2,6 @@
 instance/*
 !instance/.gitignore
 .webassets-cache
-.env
-!/.env_dev
-!/.env_prod
+.env_dev
+.env_prod
 __pycache__
