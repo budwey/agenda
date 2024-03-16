@@ -1,5 +1,5 @@
-from api.config import Resource
-from api.plugins.sheets import Sheet, SheetSchema
+from config import Resource
+from plugins.notepad import Sheet, SheetSchema
 
 
 class SheetResource(Resource):

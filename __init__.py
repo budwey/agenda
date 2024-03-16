@@ -1,13 +1,15 @@
 from flask import Flask
 from core import db, api, schema
-from config import Config, Database, Api, Schema
+from config import Config
 
 # Plugin imports
-from plugins.sheets import SheetPlugin
+from plugins import (
+    notepad_routes as notepad
+)
 
 # Available plugins
 plugins = [
-    SheetPlugin
+    notepad
 ]
 
 

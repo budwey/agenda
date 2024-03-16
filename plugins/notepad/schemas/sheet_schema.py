@@ -1,5 +1,5 @@
-from api import schema
-from api.plugins.sheets import Sheet
+from core import schema
+from plugins.notepad import Sheet
 
 
 class SheetSchema(schema.SQLAlchemyAutoSchema):

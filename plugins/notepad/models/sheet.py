@@ -1,8 +1,8 @@
-from api import db
+from core import db
 
 
 class Sheet(db.Model):
-    __tablename__ = 'sheets'
+    __tablename__ = 'notepad'
     __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String)
