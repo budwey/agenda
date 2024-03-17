@@ -1,9 +1,10 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from config import Schema
+from flask import request
 from marshmallow import fields
 from .. import Sheet
 
 
-class SheetSchema(SQLAlchemyAutoSchema):
+class SheetSchema(Schema):
     class Meta:
         model = Sheet
         load_instance = True
