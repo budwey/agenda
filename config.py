@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restx import (
     Api as ApiRest,
@@ -57,18 +56,6 @@ class Api(ApiRest):
     def __init__(self, app=None):
         super().__init__(app)
 
-    def add_resource(self, resource, *urls, **kwargs):
-        method = kwargs.pop('method', None)
-        if method is not None:
-            resource.method = method
-
-        if kwargs.get('allowed') is not None:
-            allowed = [item.upper() for item in kwargs['allowed']
-                       if item is not None]
-            kwargs['methods'] = allowed
-
-        return super().add_resource(resource, *urls, **kwargs)
-
     def setup(self, app):
         self.init_app(app)
         print(f"{messages.get('api').get('success')}")
@@ -76,29 +63,9 @@ class Api(ApiRest):
 
 class Namespace(NamespaceRest):
     def add_resource(self, resource, *urls, **kwargs):
-        method = kwargs.pop('method', None)
-        if method is not None:
-            resource.method = method
-
-        if kwargs.get('allowed') is not None:
-            allowed = [item.upper() for item in kwargs['allowed']
-                       if item is not None]
-            kwargs['methods'] = allowed
-
         return super().add_resource(resource, *urls, **kwargs)
 
 
 class Resource(ResourceRest):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    def dispatch_request(self, *args, **kwargs):
-        if self.method is not None:
-            method = getattr(self, self.method, None)
-            if method is not None and callable(method):
-                return method(*args, **kwargs)
-            else:
-                return "Invalid method", 400
-        else:
-            return super().dispatch_request(*args, **kwargs)
-
