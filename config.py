@@ -1,8 +1,12 @@
 import os
 from dotenv import load_dotenv
-from flask_marshmallow import Marshmallow
+from flask import request
 from flask_sqlalchemy import SQLAlchemy
-from flask_restx import Api as ApiRestful, Resource as ResourceRestful
+from flask_restx import (
+    Api as ApiRest,
+    Resource as ResourceRest,
+    Namespace as NamespaceRest
+)
 from constants import flask_env, envs, env_params, messages
 
 
@@ -16,6 +20,10 @@ class Config:
 
         load_dotenv(env)
         return os.environ
+
+    @classmethod
+    def is_development(cls):
+        return cls.env == 'env'
 
     @classmethod
     def setup(cls, app):
@@ -36,31 +44,61 @@ class Database(SQLAlchemy):
     def __init__(self):
         super().__init__()
 
-    def setup(self, app):
+    def setup(self, app, dev=False):
         self.init_app(app)
-        with app.app_context():
-            self.create_all()
-            print(messages.get('db').get('success'))
+        print(messages.get('db').get('success'))
+        if dev:
+            with app.app_context():
+                self.drop_all()
+                self.create_all()
 
 
-class Api(ApiRestful):
+class Api(ApiRest):
     def __init__(self, app=None):
         super().__init__(app)
+
+    def add_resource(self, resource, *urls, **kwargs):
+        method = kwargs.pop('method', None)
+        if method is not None:
+            resource.method = method
+
+        if kwargs.get('allowed') is not None:
+            allowed = [item.upper() for item in kwargs['allowed']
+                       if item is not None]
+            kwargs['methods'] = allowed
+
+        return super().add_resource(resource, *urls, **kwargs)
 
     def setup(self, app):
         self.init_app(app)
         print(f"{messages.get('api').get('success')}")
 
 
-class Resource(ResourceRestful):
-    def __init__(self, app=None):
-        super().__init__(self, app)
+class Namespace(NamespaceRest):
+    def add_resource(self, resource, *urls, **kwargs):
+        method = kwargs.pop('method', None)
+        if method is not None:
+            resource.method = method
+
+        if kwargs.get('allowed') is not None:
+            allowed = [item.upper() for item in kwargs['allowed']
+                       if item is not None]
+            kwargs['methods'] = allowed
+
+        return super().add_resource(resource, *urls, **kwargs)
 
 
-class Schema(Marshmallow):
-    def __init__(self):
-        super().__init__()
+class Resource(ResourceRest):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    def setup(self, app):
-        self.init_app(app)
-        print(messages.get('schemas').get('success'))
+    def dispatch_request(self, *args, **kwargs):
+        if self.method is not None:
+            method = getattr(self, self.method, None)
+            if method is not None and callable(method):
+                return method(*args, **kwargs)
+            else:
+                return "Invalid method", 400
+        else:
+            return super().dispatch_request(*args, **kwargs)
+

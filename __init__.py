@@ -1,5 +1,5 @@
 from flask import Flask
-from core import db, api, schema
+from core import db, api
 from config import Config
 
 # Plugin imports
@@ -24,8 +24,6 @@ def core():
     db.setup(app)
     # Setup API
     api.setup(app)
-    # Setup Schema
-    schema.setup(app)
 
     print(app.url_map)
 

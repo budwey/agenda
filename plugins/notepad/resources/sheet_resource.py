@@ -1,16 +1,16 @@
 from config import Resource
-from plugins.notepad import Sheet, SheetSchema
+from .. import Sheet, SheetSchema
 
 
 class SheetResource(Resource):
-    @classmethod
-    def get(cls, sheet_id):
-        sheet = Sheet.query.get(sheet_id)
-        if sheet is None:
-            return None
+    schema = SheetSchema()
 
-        schema = SheetSchema()
-        result = schema.dump(sheet)
+    def get(self):
+        result = self.schema.dump(Sheet.query.all(), many=True)
 
         return result
 
+    def get_sheet(self, sheet_id):
+        result = self.schema.dump(Sheet.query.get(sheet_id))
+
+        return result
